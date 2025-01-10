@@ -1,0 +1,1461 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Implementation of MWP analysis on C code in Python.">
+      
+      
+      
+      
+        <link rel="prev" href="../examples/">
+      
+      
+        <link rel="next" href="../modules/">
+      
+      
+      <link rel="icon" href="..">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.46">
+    
+    
+      
+        <title>Demo - pymwp</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.6f8fc17f.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CFira+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"Fira Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../assets/styles.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="light" data-md-color-primary="blue-grey" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="pymwp" class="md-header__button md-logo" aria-label="pymwp" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            pymwp
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Demo
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="light" data-md-color-primary="blue-grey" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue-grey" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/statycc/pymwp" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    statycc/pymwp
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="pymwp" class="md-nav__button md-logo" aria-label="pymwp" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    pymwp
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/statycc/pymwp" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    statycc/pymwp
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Installation & Use
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../features/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Supported Features
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Examples
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Demo
+  </span>
+  
+
+      </a>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Modules
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Modules
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../modules/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Introduction
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../analysis/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Analysis
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bound/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Bound
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../choice/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Choice
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../constants/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Constants
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../delta_graphs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Delta Graph
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../file_io/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    File I/O
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../matrix/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Matrix
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../monomial/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Monomial
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../parser/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Parser
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../polynomial/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Polynomial
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../relation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Relation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../relation_list/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Relation List
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../result/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Result
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../semiring/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Semiring
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../syntax/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Syntax
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../utilities/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Utilities
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Contributing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/statycc/pymwp/releases" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Release History
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://doi.org/10.5281/zenodo.7879822" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Code Archive
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/statycc/pymwp/blob/main/LICENSE" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    License
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+  <h1>Demo</h1>
+
+<p>This demo allows running pymwp analysis on <a href="../examples/">example programs</a> on the web.
+See the <a href="https://statycc.github.io/.github/pymwp">tool user guide</a> for details on interpreting the tool outputs.</p>
+<p><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/default.min.css"></p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js"></script>
+
+<div id="examples">Select example to analyze: <select id="demo-options" aria-label="demo options"></select></div>
+<div id="demo-output">Loading demo...</div>
+<div id="progress-container">
+    <div class="progress-bar">
+      <span class="bar">
+        <span class="progress"></span>
+      </span>
+    </div>
+</div>
+
+<script>
+    const base = "https://pymwp1.uk.r.appspot.com/v2/",
+        hash = location.hash ? location.hash.substr(1) : false,
+        progressBar = document.getElementById('progress-container'),
+        displayOut = document.getElementById('demo-output'),
+        select = document.getElementById('demo-options'),
+        examplesContainer = document.getElementById('examples'),
+        defaultError = 'Sorry, something went wrong! Try again later.',
+        maxTimeout = 60 * 1000;
+    let req = undefined;
+
+    const hashUrl = path => path.replace('/', '_');
+
+    const displayTextResult = (result, title) => setDisplay(buildTextResult(result, title));
+
+    const highlightOutput = () =>
+        displayOut.querySelectorAll('pre code').forEach((el) => hljs.highlightElement(el));
+
+    const displaySystemInfo = _ => get(base, ({result}) =>
+        displayTextResult(result, "System version info"));
+
+    const toggleProgressView = showProgress => showProgress ?
+        progressBar.setAttribute("visible", "visible") :
+        progressBar.removeAttribute("visible");
+
+    const toggleInfty = _ => {
+        const infinities = document.getElementsByClassName("scalar-i");
+        const remove = infinities.length ? infinities[0].getAttribute("invisible") : false
+        for (let i = infinities.length - 1; i >= 0; --i) {
+            remove ?
+                infinities[i].removeAttribute("invisible") :
+                infinities[i].setAttribute("invisible", "invisible");
+        }
+    }
+
+    const makeOption = (label, value, selected = false, disabled = false) => {
+        const option = document.createElement('option');
+        if (selected) option.setAttribute('selected', 'selected');
+        if (disabled) option.setAttribute('disabled', 'disabled');
+        if (!disabled && value) option.setAttribute('value', value);
+        option.innerText = label;
+        return option;
+    };
+
+    const makeCategory = ([category, options]) => {
+        select.append(
+            makeOption(category.toUpperCase(), undefined, false, true))
+        Object.entries(options)
+            .map(([label, path]) => makeOption(label, path, hashUrl(path) === hash))
+            .forEach(opt => select.append(opt));
+    };
+
+    const setDisplay = (node) => {
+        displayOut.innerHTML = "";
+        if (Array.isArray(node)) {
+            node.forEach(n => displayOut.append(n))
+        } else displayOut.appendChild(node);
+        toggleProgressView(false);
+    };
+
+    const buildTextResult = (result, title) => {
+        const div = document.createElement('div');
+        const header = document.createElement('h2');
+        header.innerText = title;
+        const text = document.createElement('pre');
+        text.className = 'wrap';
+        text.innerText = result;
+        div.appendChild(header)
+        div.appendChild(text);
+        return div;
+    };
+
+    const buildProgramOutput = (source, url, name, res) => {
+        const header = document.createElement('h2');
+        header.innerText = 'Program'
+        const para = document.createElement('p');
+        para.innerText = 'The exact program that was analyzed ';
+        const pre = document.createElement('pre')
+        const code = document.createElement('code');
+        code.className = 'language-C';
+        code.innerText = source;
+        pre.append(code);
+        const link = document.createElement('a');
+        link.setAttribute('href', url);
+        link.setAttribute('target', '_blank');
+        link.setAttribute('rel', 'nofollow noopener')
+        link.innerText = `${name} ↗`;
+        let details = ''
+        if (res) {
+            const {program = {}, n_functions = 0, dur_ms = -1} = res;
+            const text = [
+                program.n_lines ? `LOC: ${program.n_lines}` : null,
+                n_functions > 0 ? `Functions: ${n_functions}` : null,
+                dur_ms >= 0 ? `Analysis time: ${dur_ms} ms` : null].join("   ")
+            if (text.trim().length > 0)
+                details = partialResult('', 'Program analysis metrics', textBlock(text))
+        }
+
+        const div = document.createElement('div');
+        div.append(header);
+        div.append(para);
+        div.append(pre);
+        div.append(link);
+        div.append(details);
+        return div;
+    };
+
+    const analyze = (event) => {
+        const path = event.target.value;
+        const URL = `${base}${path}`;
+        window.location.hash = `#${hashUrl(path)}`;
+        displayOut.innerText = `Analyzing ${path}...`;
+        get(URL, displayAnalysisResult);
+    };
+
+    const get = (URL, callback) => {
+        req = URL;
+
+        const xhr = new window.XMLHttpRequest();
+        xhr.open('GET', URL);
+        xhr.timeout = maxTimeout;
+        xhr.ontimeout = () => {
+            if (req === URL)
+                displayTextResult("That took too long", "Server timeout")
+        };
+        xhr.onerror = () => {
+            if (req === URL)
+                displayTextResult(defaultError, "Unavailable")
+        };
+        xhr.onload = () => {
+            if (xhr.readyState !== 4) return;
+            try {
+                if (req === URL) callback(JSON.parse(xhr.response));
+            } catch (e) {
+                if (req === URL) displayTextResult(defaultError, "Unavailable")
+            }
+        };
+        toggleProgressView(true);
+        xhr.send();
+    };
+
+    const textBlock = (content) => {
+        const pre = document.createElement('pre');
+        const code = document.createElement('code');
+        pre.className = 'wrap';
+        code.className = 'python';
+        code.innerText = content;
+        pre.append(code);
+        return pre;
+    };
+
+    const partialResult = (title, details, child, offset = 2) => {
+        const div = document.createElement('div');
+        const eval = document.createElement('h' + offset);
+        div.append(eval);
+        const label = document.createElement('p');
+        div.append(label);
+        eval.innerText = title;
+        label.innerHTML = details;
+        if (child) div.append(child);
+        return div;
+    };
+
+    const renderMatrixValue = ({list = []}) => {
+        const td = document.createElement('td');
+        const code = document.createElement('div');
+        code.innerHTML = list.map(({deltas, scalar}) => {
+            const d = deltas.map(([i, j]) => `(${i},${j})`).join(',')
+            return `<code class="scalar-${scalar}">${scalar}` + (d ? `<span>(${d})</span>` : '') + '</code>';
+        }).join('\n');
+        td.append(code)
+        return td;
+    };
+
+    const renderMatrixRow = (variableName, rowData) => {
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        const code = document.createElement('code');
+        code.innerText = variableName;
+        td.append(code);
+        tr.append(td);
+        rowData.map(renderMatrixValue).map(cell => tr.append(cell));
+        return tr;
+    };
+
+    const renderMatrix = (relation) => {
+        const {matrix, variables} = relation;
+        const div = document.createElement('div');
+        const table = document.createElement('table');
+        div.className = 'table-wrapper';
+        div.append(table);
+        const tr = document.createElement('tr');
+        for (let i = -1; i < variables.length; i++) {
+            const td = document.createElement('td');
+            const code = document.createElement('code');
+            if (i >= 0) code.innerText = variables[i];
+            td.append(code);
+            tr.append(td);
+        }
+        table.append(tr);
+        for (let i = 0; i < variables.length; i++)
+            table.append(renderMatrixRow(variables[i], matrix[i]))
+        return div;
+    };
+
+    function buildFunctionResult(functionName, details, bound = null, reason = null) {
+        const relation = details.relation
+        const combinations = details.choices
+        const infinite = details.infinite
+
+        const div = document.createElement('div');
+        const offset = functionName ? 4 : 3;
+        if (functionName) {
+            const header = document.createElement('h3');
+            header.innerText = `Function: ${functionName}`;
+            div.append(header);
+        }
+        if (infinite) {
+            let inftyRes = '<p>Infinite: no polynomial bound exists.</p>'
+            if (reason) {
+                const issues = Object.entries(reason).map(([k, vals]) => {
+                    const valMap = vals.map(v => `<code>${v}</code>`).join(', ')
+                    return `<li><code>${k}</code> &rarr; ${valMap}</li>`
+                })
+                inftyRes += `<p>Problematic dependencies:<br/> <ol>${issues.join('')}</ol></p>`
+            }
+            div.append(partialResult('Evaluation', inftyRes,
+                undefined, offset));
+        } else {
+            if (combinations && combinations.valid)
+                div.append(partialResult(
+                    `Choices (${details.n_bounds} bound${details.n_bounds === 1 ? '' : 's'})`, '',
+                    (combinations.valid.length && combinations.valid[0].length ?
+                    textBlock(JSON.stringify(combinations.valid)) : ''), offset));
+            if (bound)
+                div.append(partialResult(`Bound ${details.n_bounds === 1 ? '' : '(one example)'}`, '',
+                    textBlock(bound), offset));
+        }
+        if (relation) {
+            div.append(partialResult('Matrix', '', renderMatrix(relation), offset));
+            document.onkeyup = event => event.code === "MetaLeft" ? toggleInfty() : true;
+        }
+        return div;
+    }
+
+    function displayAnalysisResult(response) {
+        const {url, program, name, result = {}, bounds = {}, fail = {}, error = false} = response;
+        const bounds_dist = Object.fromEntries(bounds)
+        const fail_dist = Object.fromEntries(fail)
+        const output = [buildProgramOutput(program, url, name, result)];
+        if (error)
+            output.push(buildTextResult(
+                'Analysis terminated with non-0 exit code. ' +
+                'This happens when file cannot be analyzed (empty or invalid ' +
+                'input that yields no result) or if an error occurs during ' +
+                `analysis.\n\n${response.error_msg}`, 'Evaluation'));
+        else {
+            const relations = result && result.relations ? result.relations : {}
+            Object.entries(relations)
+                .map(([k, v]) => buildFunctionResult(k, v, bounds_dist[k], fail_dist[k]))
+                .forEach(item => output.push(item))
+        }
+        setDisplay(output);
+        highlightOutput();
+        toggleProgressView(false);
+    }
+
+    (function initDemo() {
+        examplesContainer.style.display = "none";
+        get(`${base}examples`, (result) => {
+            toggleProgressView(false);
+            select.append(makeOption('--available examples--', undefined, !hash, true));
+            Object.entries(result).map(makeCategory);
+            examplesContainer.style.display = "block";
+            select.onchange = event => (event.target.value === "/") ?
+                displaySystemInfo() : analyze(event);
+            displayOut.innerText = ""
+            if (hash) select.dispatchEvent(new Event('change'));
+        });
+    }());
+</script>
+
+<style>
+    .md-sidebar.md-sidebar--secondary,
+    .md-content__button.md-icon {
+        display: none
+    }
+
+    #demo-output {
+        margin: 2rem 0 5rem;
+    }
+
+    #demo-output h3, #demo-output h4, #demo-output h5, #demo-output h6 {
+        font-weight: 300
+    }
+
+    #demo-output .wrap, #demo-output .wrap code {
+        max-width: 100%;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+
+    #demo-output label::after {
+        content: ": ";
+    }
+
+    #demo-output .table-wrapper {
+        display: inline-block;
+        max-width: 100%;
+        overflow: auto;
+        position: relative;
+        border: 1px solid #dddb;
+        border-top: none;
+        box-sizing: border-box;
+    }
+
+    #demo-output .table-wrapper table, #demo-output .table-wrapper table tr > td {
+        border-color: #dddb;
+    }
+
+    #demo-output .table-wrapper table {
+        border: none;
+        border-collapse: collapse;
+        margin: 0 !important;
+        display: table;
+    }
+
+    #demo-output .table-wrapper table tr > td {
+        border-right-width: 1px;
+        border-right-style: solid;
+        padding: 4px 2px;
+        line-height: 1;
+        text-align: left;
+        vertical-align: top;
+        min-width: 100px;
+        background: transparent;
+        max-width: 300px;
+    }
+
+    #demo-output .table-wrapper table tr > td:last-child {
+        border-right: none;
+    }
+
+    #demo-output .table-wrapper table tr > td:first-child {
+        position: sticky;
+        min-width: 60px !important;
+        width: 60px !important;
+        max-width: 60px !important;
+        padding: 8px 10px;
+        box-sizing: border-box;
+        left: 0;
+        z-index: 1;
+    }
+
+    #demo-output .table-wrapper table tr:first-child td,
+    #demo-output .table-wrapper table tr > td:first-child {
+        background: var(--md-code-bg-color);
+    }
+
+    #demo-output .table-wrapper table tr td:first-child::after {
+        content: "";
+        position: absolute;
+        width: 1px;
+        background: #dddb;
+        height: 100%;
+        right: -1px;
+        top: 0;
+        bottom: 0;
+    }
+
+    #demo-output .table-wrapper table tr:first-child code,
+    #demo-output .table-wrapper table tr > td:first-child code {
+        font-weight: bold;
+        box-sizing: border-box;
+        padding: 0;
+        white-space: nowrap;
+        min-width: 40px !important;
+        width: 40px !important;
+        max-width: 40px !important;
+        overflow: hidden;
+        display: block;
+        text-overflow: ellipsis;
+    }
+
+    #demo-output .table-wrapper table tr td code {
+        background: transparent;
+        white-space: pre-wrap;
+        display: block;
+    }
+
+    #demo-output .table-wrapper table tr td .scalar-i[invisible] {
+        display: none;
+    }
+
+    #progress-container {
+        position: relative;
+        height: 200px;
+        margin-bottom: 10rem;
+        display: none;
+    }
+
+    #progress-container[visible] {
+        display: block;
+    }
+
+    .progress-bar {
+        border-radius: 60px;
+        overflow: hidden;
+        width: 250px;
+        margin: 2rem auto;
+        opacity: 0;
+        left: 50%;
+        max-width: 50%;
+        position: absolute;
+        top: 50%;
+        transform: translate3d(-50%, -50%, 0);
+    }
+
+    #progress-container[visible] .progress-bar {
+        animation: fadeIn 0.5s;
+        animation-delay: 0.5s;
+        animation-fill-mode: both;
+    }
+
+    .progress-bar span {
+        display: block;
+    }
+
+    .bar {
+        background: rgba(0, 0, 0, 0.075);
+    }
+
+    .progress {
+        -webkit-animation: loader 8s ease infinite;
+        animation: loader 6s ease infinite;
+        background: var(--md-accent-fg-color);
+        padding: 5px;
+        width: 0;
+    }
+
+    .hljs-section, .hljs-title {
+        color: var(--md-code-hl-special-color);
+    }
+
+    .hljs-deletion, .hljs-number, .hljs-quote, .hljs-selector-class, .hljs-selector-id, .hljs-string, .hljs-template-tag, .hljs-type {
+        color: var(--md-accent-fg-color);
+    }
+
+
+    @-webkit-keyframes loader {
+        0% {
+            width: 0;
+        }
+        20% {
+            width: 10%;
+        }
+        25% {
+            width: 24%;
+        }
+        43% {
+            width: 41%;
+        }
+        56% {
+            width: 50%;
+        }
+        66% {
+            width: 52%;
+        }
+        71% {
+            width: 60%;
+        }
+        75% {
+            width: 76%;
+        }
+        94% {
+            width: 86%;
+        }
+        100% {
+            width: 100%;
+        }
+    }
+
+    @keyframes loader {
+        0% {
+            width: 0;
+        }
+        20% {
+            width: 10%;
+        }
+        25% {
+            width: 24%;
+        }
+        43% {
+            width: 41%;
+        }
+        56% {
+            width: 50%;
+        }
+        66% {
+            width: 52%;
+        }
+        71% {
+            width: 60%;
+        }
+        75% {
+            width: 76%;
+        }
+        94% {
+            width: 86%;
+        }
+        100% {
+            width: 100%;
+        }
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+</style>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.sections", "navigation.top", "content.code.copy", "content.tooltips", "search.highlight", "search.suggest", "toc.follow"], "search": "../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.83f73b43.min.js"></script>
+      
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+        <script src="../assets/config.js"></script>
+      
+    
+  </body>
+</html>

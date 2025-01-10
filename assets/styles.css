@@ -1,0 +1,97 @@
+.doc.doc-object.doc-method {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    padding-top: .25rem;
+    padding-bottom: .25rem;
+    border-top: 2px solid #ddd;
+}
+
+.doc.doc-heading {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.doc.doc-heading > code {
+    background: transparent;
+    padding-left: 0;
+}
+
+/* Site width etc.*/
+.md-grid {
+    max-width: 64rem !important;
+}
+
+/* navigation bar active color*/
+.md-nav__item .md-nav__link--active {
+    font-weight: bold !important;
+    font-size: .75rem !important;
+    color: var(--md-accent-fg-color);
+}
+
+.md-content article {
+    padding-bottom: 3rem;
+}
+
+.md-content article a {
+    color: var(--md-accent-fg-color);
+}
+
+:root {
+    --doc-symbol-parameter-fg-color: #673AB7;
+    --doc-symbol-attribute-fg-color: #0D47A1BB;
+    --doc-symbol-function-fg-color: #00838F;
+    --doc-symbol-method-fg-color: #546E7A;
+    --doc-symbol-class-fg-color: #FF6E40;
+    --doc-symbol-module-fg-color: #ff0060;
+
+    --doc-symbol-parameter-bg-color: #673AB713;
+    --doc-symbol-attribute-bg-color: #0D47A113;
+    --doc-symbol-function-bg-color: #00838F13;
+    --doc-symbol-method-bg-color: #546E7A13;
+    --doc-symbol-class-bg-color: #FF980013;
+    --doc-symbol-module-bg-color: #ff006013;
+}
+
+#program-categories + .admonition.info {padding: .6rem .6rem .6rem 0!important;}
+
+.doc-label { border-radius: 4px; padding: 1px 5px; font-weight: bold; font-size: .65rem; vertical-align: middle; }
+.doc-labels { margin-left: .35em; }
+.doc-label code { background: transparent; }
+.doc-label-property code,
+.doc-label-abstractmethod code,
+.doc-label-staticmethod code,
+.doc-label-module-attribute code,
+.doc-label-class-attribute code,
+.doc-label-instance-attribute code { display: none; }
+
+.doc-label-abstractmethod { background-color: #EC407A; }
+.doc-label-staticmethod { background-color: #31ff99; }
+.doc-label-property { background-color: #FFCA28; }
+.doc-label-module-attribute { background-color: #00838F; }
+.doc-label-class-attribute { background-color: #4051b5; }
+.doc-label-instance-attribute { background-color: #6A1B9A; }
+
+.doc-label-instance-attribute::after,
+.doc-label-class-attribute::after,
+.doc-label-module-attribute::after,
+.doc-label-abstractmethod::after { color: white; }
+.doc-label-staticmethod::after,
+.doc-label-property::after { color: #000e; }
+
+.doc-label-module-attribute::after { content:"module-attr"; }
+.doc-label-staticmethod::after { content: "static"; }
+.doc-label-abstractmethod::after { content: "abstract"; }
+.doc-label-property::after { content: "property"; }
+.doc-label-class-attribute::after { content:"class-attr"; }
+.doc-label-instance-attribute::after { content:"instance-attr"; }
+
+.doc-symbol-toc.doc-symbol-parameter::after { content: "P"; }
+.doc-symbol-toc.doc-symbol-attribute::after { content: "A"; }
+.doc-symbol-toc.doc-symbol-function::after { content: "F"; }
+.doc-symbol-heading.doc-symbol-function::after { content: "function"; }
+.doc-symbol-toc.doc-symbol-method::after { content: "M"; }
+.doc-symbol-heading.doc-symbol-method::after { content: "method"; }
+.doc-symbol-toc.doc-symbol-class::after { content: "C"; }
+.doc-symbol-toc.doc-symbol-module::after {content: "M"; }
+
+.highlight.no-copy .md-clipboard { display: none; }

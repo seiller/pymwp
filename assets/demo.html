@@ -1,0 +1,537 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/default.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js"></script>
+
+<div id="examples">Select example to analyze: <select id="demo-options" aria-label="demo options"></select></div>
+<div id="demo-output">Loading demo...</div>
+<div id="progress-container">
+    <div class="progress-bar">
+      <span class="bar">
+        <span class="progress"></span>
+      </span>
+    </div>
+</div>
+
+<script>
+    const base = "https://pymwp1.uk.r.appspot.com/v2/",
+        hash = location.hash ? location.hash.substr(1) : false,
+        progressBar = document.getElementById('progress-container'),
+        displayOut = document.getElementById('demo-output'),
+        select = document.getElementById('demo-options'),
+        examplesContainer = document.getElementById('examples'),
+        defaultError = 'Sorry, something went wrong! Try again later.',
+        maxTimeout = 60 * 1000;
+    let req = undefined;
+
+    const hashUrl = path => path.replace('/', '_');
+
+    const displayTextResult = (result, title) => setDisplay(buildTextResult(result, title));
+
+    const highlightOutput = () =>
+        displayOut.querySelectorAll('pre code').forEach((el) => hljs.highlightElement(el));
+
+    const displaySystemInfo = _ => get(base, ({result}) =>
+        displayTextResult(result, "System version info"));
+
+    const toggleProgressView = showProgress => showProgress ?
+        progressBar.setAttribute("visible", "visible") :
+        progressBar.removeAttribute("visible");
+
+    const toggleInfty = _ => {
+        const infinities = document.getElementsByClassName("scalar-i");
+        const remove = infinities.length ? infinities[0].getAttribute("invisible") : false
+        for (let i = infinities.length - 1; i >= 0; --i) {
+            remove ?
+                infinities[i].removeAttribute("invisible") :
+                infinities[i].setAttribute("invisible", "invisible");
+        }
+    }
+
+    const makeOption = (label, value, selected = false, disabled = false) => {
+        const option = document.createElement('option');
+        if (selected) option.setAttribute('selected', 'selected');
+        if (disabled) option.setAttribute('disabled', 'disabled');
+        if (!disabled && value) option.setAttribute('value', value);
+        option.innerText = label;
+        return option;
+    };
+
+    const makeCategory = ([category, options]) => {
+        select.append(
+            makeOption(category.toUpperCase(), undefined, false, true))
+        Object.entries(options)
+            .map(([label, path]) => makeOption(label, path, hashUrl(path) === hash))
+            .forEach(opt => select.append(opt));
+    };
+
+    const setDisplay = (node) => {
+        displayOut.innerHTML = "";
+        if (Array.isArray(node)) {
+            node.forEach(n => displayOut.append(n))
+        } else displayOut.appendChild(node);
+        toggleProgressView(false);
+    };
+
+    const buildTextResult = (result, title) => {
+        const div = document.createElement('div');
+        const header = document.createElement('h2');
+        header.innerText = title;
+        const text = document.createElement('pre');
+        text.className = 'wrap';
+        text.innerText = result;
+        div.appendChild(header)
+        div.appendChild(text);
+        return div;
+    };
+
+    const buildProgramOutput = (source, url, name, res) => {
+        const header = document.createElement('h2');
+        header.innerText = 'Program'
+        const para = document.createElement('p');
+        para.innerText = 'The exact program that was analyzed ';
+        const pre = document.createElement('pre')
+        const code = document.createElement('code');
+        code.className = 'language-C';
+        code.innerText = source;
+        pre.append(code);
+        const link = document.createElement('a');
+        link.setAttribute('href', url);
+        link.setAttribute('target', '_blank');
+        link.setAttribute('rel', 'nofollow noopener')
+        link.innerText = `${name} ↗`;
+        let details = ''
+        if (res) {
+            const {program = {}, n_functions = 0, dur_ms = -1} = res;
+            const text = [
+                program.n_lines ? `LOC: ${program.n_lines}` : null,
+                n_functions > 0 ? `Functions: ${n_functions}` : null,
+                dur_ms >= 0 ? `Analysis time: ${dur_ms} ms` : null].join("   ")
+            if (text.trim().length > 0)
+                details = partialResult('', 'Program analysis metrics', textBlock(text))
+        }
+
+        const div = document.createElement('div');
+        div.append(header);
+        div.append(para);
+        div.append(pre);
+        div.append(link);
+        div.append(details);
+        return div;
+    };
+
+    const analyze = (event) => {
+        const path = event.target.value;
+        const URL = `${base}${path}`;
+        window.location.hash = `#${hashUrl(path)}`;
+        displayOut.innerText = `Analyzing ${path}...`;
+        get(URL, displayAnalysisResult);
+    };
+
+    const get = (URL, callback) => {
+        req = URL;
+
+        const xhr = new window.XMLHttpRequest();
+        xhr.open('GET', URL);
+        xhr.timeout = maxTimeout;
+        xhr.ontimeout = () => {
+            if (req === URL)
+                displayTextResult("That took too long", "Server timeout")
+        };
+        xhr.onerror = () => {
+            if (req === URL)
+                displayTextResult(defaultError, "Unavailable")
+        };
+        xhr.onload = () => {
+            if (xhr.readyState !== 4) return;
+            try {
+                if (req === URL) callback(JSON.parse(xhr.response));
+            } catch (e) {
+                if (req === URL) displayTextResult(defaultError, "Unavailable")
+            }
+        };
+        toggleProgressView(true);
+        xhr.send();
+    };
+
+    const textBlock = (content) => {
+        const pre = document.createElement('pre');
+        const code = document.createElement('code');
+        pre.className = 'wrap';
+        code.className = 'python';
+        code.innerText = content;
+        pre.append(code);
+        return pre;
+    };
+
+    const partialResult = (title, details, child, offset = 2) => {
+        const div = document.createElement('div');
+        const eval = document.createElement('h' + offset);
+        div.append(eval);
+        const label = document.createElement('p');
+        div.append(label);
+        eval.innerText = title;
+        label.innerHTML = details;
+        if (child) div.append(child);
+        return div;
+    };
+
+    const renderMatrixValue = ({list = []}) => {
+        const td = document.createElement('td');
+        const code = document.createElement('div');
+        code.innerHTML = list.map(({deltas, scalar}) => {
+            const d = deltas.map(([i, j]) => `(${i},${j})`).join(',')
+            return `<code class="scalar-${scalar}">${scalar}` + (d ? `<span>(${d})</span>` : '') + '</code>';
+        }).join('\n');
+        td.append(code)
+        return td;
+    };
+
+    const renderMatrixRow = (variableName, rowData) => {
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        const code = document.createElement('code');
+        code.innerText = variableName;
+        td.append(code);
+        tr.append(td);
+        rowData.map(renderMatrixValue).map(cell => tr.append(cell));
+        return tr;
+    };
+
+    const renderMatrix = (relation) => {
+        const {matrix, variables} = relation;
+        const div = document.createElement('div');
+        const table = document.createElement('table');
+        div.className = 'table-wrapper';
+        div.append(table);
+        const tr = document.createElement('tr');
+        for (let i = -1; i < variables.length; i++) {
+            const td = document.createElement('td');
+            const code = document.createElement('code');
+            if (i >= 0) code.innerText = variables[i];
+            td.append(code);
+            tr.append(td);
+        }
+        table.append(tr);
+        for (let i = 0; i < variables.length; i++)
+            table.append(renderMatrixRow(variables[i], matrix[i]))
+        return div;
+    };
+
+    function buildFunctionResult(functionName, details, bound = null, reason = null) {
+        const relation = details.relation
+        const combinations = details.choices
+        const infinite = details.infinite
+
+        const div = document.createElement('div');
+        const offset = functionName ? 4 : 3;
+        if (functionName) {
+            const header = document.createElement('h3');
+            header.innerText = `Function: ${functionName}`;
+            div.append(header);
+        }
+        if (infinite) {
+            let inftyRes = '<p>Infinite: no polynomial bound exists.</p>'
+            if (reason) {
+                const issues = Object.entries(reason).map(([k, vals]) => {
+                    const valMap = vals.map(v => `<code>${v}</code>`).join(', ')
+                    return `<li><code>${k}</code> &rarr; ${valMap}</li>`
+                })
+                inftyRes += `<p>Problematic dependencies:<br/> <ol>${issues.join('')}</ol></p>`
+            }
+            div.append(partialResult('Evaluation', inftyRes,
+                undefined, offset));
+        } else {
+            if (combinations && combinations.valid)
+                div.append(partialResult(
+                    `Choices (${details.n_bounds} bound${details.n_bounds === 1 ? '' : 's'})`, '',
+                    (combinations.valid.length && combinations.valid[0].length ?
+                    textBlock(JSON.stringify(combinations.valid)) : ''), offset));
+            if (bound)
+                div.append(partialResult(`Bound ${details.n_bounds === 1 ? '' : '(one example)'}`, '',
+                    textBlock(bound), offset));
+        }
+        if (relation) {
+            div.append(partialResult('Matrix', '', renderMatrix(relation), offset));
+            document.onkeyup = event => event.code === "MetaLeft" ? toggleInfty() : true;
+        }
+        return div;
+    }
+
+    function displayAnalysisResult(response) {
+        const {url, program, name, result = {}, bounds = {}, fail = {}, error = false} = response;
+        const bounds_dist = Object.fromEntries(bounds)
+        const fail_dist = Object.fromEntries(fail)
+        const output = [buildProgramOutput(program, url, name, result)];
+        if (error)
+            output.push(buildTextResult(
+                'Analysis terminated with non-0 exit code. ' +
+                'This happens when file cannot be analyzed (empty or invalid ' +
+                'input that yields no result) or if an error occurs during ' +
+                `analysis.\n\n${response.error_msg}`, 'Evaluation'));
+        else {
+            const relations = result && result.relations ? result.relations : {}
+            Object.entries(relations)
+                .map(([k, v]) => buildFunctionResult(k, v, bounds_dist[k], fail_dist[k]))
+                .forEach(item => output.push(item))
+        }
+        setDisplay(output);
+        highlightOutput();
+        toggleProgressView(false);
+    }
+
+    (function initDemo() {
+        examplesContainer.style.display = "none";
+        get(`${base}examples`, (result) => {
+            toggleProgressView(false);
+            select.append(makeOption('--available examples--', undefined, !hash, true));
+            Object.entries(result).map(makeCategory);
+            examplesContainer.style.display = "block";
+            select.onchange = event => (event.target.value === "/") ?
+                displaySystemInfo() : analyze(event);
+            displayOut.innerText = ""
+            if (hash) select.dispatchEvent(new Event('change'));
+        });
+    }());
+</script>
+
+<style>
+    .md-sidebar.md-sidebar--secondary,
+    .md-content__button.md-icon {
+        display: none
+    }
+
+    #demo-output {
+        margin: 2rem 0 5rem;
+    }
+
+    #demo-output h3, #demo-output h4, #demo-output h5, #demo-output h6 {
+        font-weight: 300
+    }
+
+    #demo-output .wrap, #demo-output .wrap code {
+        max-width: 100%;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+
+    #demo-output label::after {
+        content: ": ";
+    }
+
+    #demo-output .table-wrapper {
+        display: inline-block;
+        max-width: 100%;
+        overflow: auto;
+        position: relative;
+        border: 1px solid #dddb;
+        border-top: none;
+        box-sizing: border-box;
+    }
+
+    #demo-output .table-wrapper table, #demo-output .table-wrapper table tr > td {
+        border-color: #dddb;
+    }
+
+    #demo-output .table-wrapper table {
+        border: none;
+        border-collapse: collapse;
+        margin: 0 !important;
+        display: table;
+    }
+
+    #demo-output .table-wrapper table tr > td {
+        border-right-width: 1px;
+        border-right-style: solid;
+        padding: 4px 2px;
+        line-height: 1;
+        text-align: left;
+        vertical-align: top;
+        min-width: 100px;
+        background: transparent;
+        max-width: 300px;
+    }
+
+    #demo-output .table-wrapper table tr > td:last-child {
+        border-right: none;
+    }
+
+    #demo-output .table-wrapper table tr > td:first-child {
+        position: sticky;
+        min-width: 60px !important;
+        width: 60px !important;
+        max-width: 60px !important;
+        padding: 8px 10px;
+        box-sizing: border-box;
+        left: 0;
+        z-index: 1;
+    }
+
+    #demo-output .table-wrapper table tr:first-child td,
+    #demo-output .table-wrapper table tr > td:first-child {
+        background: var(--md-code-bg-color);
+    }
+
+    #demo-output .table-wrapper table tr td:first-child::after {
+        content: "";
+        position: absolute;
+        width: 1px;
+        background: #dddb;
+        height: 100%;
+        right: -1px;
+        top: 0;
+        bottom: 0;
+    }
+
+    #demo-output .table-wrapper table tr:first-child code,
+    #demo-output .table-wrapper table tr > td:first-child code {
+        font-weight: bold;
+        box-sizing: border-box;
+        padding: 0;
+        white-space: nowrap;
+        min-width: 40px !important;
+        width: 40px !important;
+        max-width: 40px !important;
+        overflow: hidden;
+        display: block;
+        text-overflow: ellipsis;
+    }
+
+    #demo-output .table-wrapper table tr td code {
+        background: transparent;
+        white-space: pre-wrap;
+        display: block;
+    }
+
+    #demo-output .table-wrapper table tr td .scalar-i[invisible] {
+        display: none;
+    }
+
+    #progress-container {
+        position: relative;
+        height: 200px;
+        margin-bottom: 10rem;
+        display: none;
+    }
+
+    #progress-container[visible] {
+        display: block;
+    }
+
+    .progress-bar {
+        border-radius: 60px;
+        overflow: hidden;
+        width: 250px;
+        margin: 2rem auto;
+        opacity: 0;
+        left: 50%;
+        max-width: 50%;
+        position: absolute;
+        top: 50%;
+        transform: translate3d(-50%, -50%, 0);
+    }
+
+    #progress-container[visible] .progress-bar {
+        animation: fadeIn 0.5s;
+        animation-delay: 0.5s;
+        animation-fill-mode: both;
+    }
+
+    .progress-bar span {
+        display: block;
+    }
+
+    .bar {
+        background: rgba(0, 0, 0, 0.075);
+    }
+
+    .progress {
+        -webkit-animation: loader 8s ease infinite;
+        animation: loader 6s ease infinite;
+        background: var(--md-accent-fg-color);
+        padding: 5px;
+        width: 0;
+    }
+
+    .hljs-section, .hljs-title {
+        color: var(--md-code-hl-special-color);
+    }
+
+    .hljs-deletion, .hljs-number, .hljs-quote, .hljs-selector-class, .hljs-selector-id, .hljs-string, .hljs-template-tag, .hljs-type {
+        color: var(--md-accent-fg-color);
+    }
+
+
+    @-webkit-keyframes loader {
+        0% {
+            width: 0;
+        }
+        20% {
+            width: 10%;
+        }
+        25% {
+            width: 24%;
+        }
+        43% {
+            width: 41%;
+        }
+        56% {
+            width: 50%;
+        }
+        66% {
+            width: 52%;
+        }
+        71% {
+            width: 60%;
+        }
+        75% {
+            width: 76%;
+        }
+        94% {
+            width: 86%;
+        }
+        100% {
+            width: 100%;
+        }
+    }
+
+    @keyframes loader {
+        0% {
+            width: 0;
+        }
+        20% {
+            width: 10%;
+        }
+        25% {
+            width: 24%;
+        }
+        43% {
+            width: 41%;
+        }
+        56% {
+            width: 50%;
+        }
+        66% {
+            width: 52%;
+        }
+        71% {
+            width: 60%;
+        }
+        75% {
+            width: 76%;
+        }
+        94% {
+            width: 86%;
+        }
+        100% {
+            width: 100%;
+        }
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+</style>
